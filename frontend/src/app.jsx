@@ -37,7 +37,9 @@ export default function App() {
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-10 p-6 border rounded shadow bg-white overflow-hidden">
+    <div className="w-full mx-auto border rounded shadow bg-white overflow-hidden
+                    max-w-2xl sm:max-w-3xl md:max-w-4xl lg:max-w-5xl
+                    mt-6 sm:mt-10 px-4 sm:px-6 md:px-8 py-4 sm:py-6">
       <AnimatePresence mode="wait">
         {/* Start Screen */}
         {!started && (

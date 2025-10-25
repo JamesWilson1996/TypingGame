@@ -7,9 +7,12 @@ export default function TypingGame({ onFinish }) {
   const [finished, setFinished] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [accuracy, setAccuracy] = useState(100);
-  const [sampleText, setSampleText] = useState(generateRandomText());
+  const [sampleText, setSampleText] = useState(generateRandomText(200));
   
   const [wpm, setWpm] = useState(0);
+
+  const TEST_DURATION_SECONDS = 30;
+  const [timeLeft, setTimeLeft] = useState(TEST_DURATION_SECONDS);
 
   // ✅ Track total keystrokes
   const [totalTyped, setTotalTyped] = useState(0);
@@ -17,6 +20,7 @@ export default function TypingGame({ onFinish }) {
 
   const containerRef = useRef(null);
   const typingTimer = useRef(null);
+  const countdownRef = useRef(null);
 
   useEffect(() => {
     containerRef.current?.focus();
@@ -25,7 +29,19 @@ export default function TypingGame({ onFinish }) {
   const handleKeyDown = (e) => {
     if (finished) return;
 
-    if (!startTime) setStartTime(Date.now());
+    if (!startTime) {
+      const now = Date.now();
+      setStartTime(now);
+      countdownRef.current = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(countdownRef.current);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
     setIsTyping(true);
 
     // Reset idle timer
@@ -70,17 +86,22 @@ export default function TypingGame({ onFinish }) {
     }
   }, [totalTyped, totalCorrect, input, startTime]);
 
-  // Finish detection
   useEffect(() => {
-    if (input === sampleText) {
-      const endTime = Date.now();
-      const timeTaken = (endTime - startTime) / 1000 / 60;
-      const words = sampleText.split(" ").length;
-      const finalWpm = Math.round(words / timeTaken);
+    return () => {
+      clearInterval(countdownRef.current);
+      clearTimeout(typingTimer.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (timeLeft === 0 && !finished) {
       setFinished(true);
-      onFinish(finalWpm, accuracy);
+      const wordsTyped = input.length / 5;
+      const finalWpm = Math.round(wordsTyped / (TEST_DURATION_SECONDS / 60));
+      const finalAccuracy = totalTyped > 0 ? Math.round((totalCorrect / totalTyped) * 100) : 100;
+      onFinish(finalWpm, finalAccuracy);
     }
-  }, [input, startTime, accuracy, onFinish]);
+  }, [timeLeft, finished, input.length, totalTyped, totalCorrect, onFinish]);
 
   const renderText = () => {
     const chars = sampleText.split("");
@@ -115,7 +136,11 @@ export default function TypingGame({ onFinish }) {
         ref={containerRef}
         tabIndex={0}
         onKeyDown={handleKeyDown}
-        className="text-lg font-mono border rounded p-6 bg-gray-50 cursor-text text-left select-none"
+        className="w-full max-w-full font-mono border border-gray-200 rounded-lg bg-gray-50 cursor-text text-left select-none
+                   text-base sm:text-lg md:text-xl lg:text-2xl
+                   p-4 sm:p-6 md:p-8
+                   min-h-[30vh] sm:min-h-[38vh] md:min-h-[45vh] lg:min-h-[52vh]
+                   max-h-[70vh] overflow-y-auto"
       >
         {renderText()}
       </div>
@@ -123,6 +148,9 @@ export default function TypingGame({ onFinish }) {
       {/* Live Stats */}
       {!finished && (
         <div className="mt-4 text-gray-700 text-md font-semibold flex justify-center gap-6">
+          <p>
+            Time: <span className="text-red-600">{String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}</span>
+          </p>
           <p>
             Accuracy: <span className="text-blue-600">{accuracy}%</span>
           </p>

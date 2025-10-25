@@ -14,7 +14,6 @@ export default function TypingGame({ onFinish }) {
   const TEST_DURATION_SECONDS = 30;
   const [timeLeft, setTimeLeft] = useState(TEST_DURATION_SECONDS);
 
-  // ✅ Track total keystrokes
   const [totalTyped, setTotalTyped] = useState(0);
   const [totalCorrect, setTotalCorrect] = useState(0);
 
@@ -26,8 +25,32 @@ export default function TypingGame({ onFinish }) {
     containerRef.current?.focus();
   }, []);
 
+  const resetTest = () => {
+    clearInterval(countdownRef.current);
+    clearTimeout(typingTimer.current);
+    setInput("");
+    setStartTime(null);
+    setFinished(false);
+    setIsTyping(false);
+    setAccuracy(0);
+    setSampleText(generateRandomText(200));
+    setWpm(0);
+    setTotalTyped(0);
+    setTotalCorrect(0);
+    setTimeLeft(TEST_DURATION_SECONDS);
+    // refocus the typing area
+    setTimeout(() => containerRef.current?.focus(), 0);
+  };
+
   const handleKeyDown = (e) => {
     if (finished) return;
+
+    // Reset the test with Tab
+    if (e.key === "Tab") {
+      e.preventDefault();
+      resetTest();
+      return;
+    }
 
     if (!startTime) {
       const now = Date.now();
@@ -73,7 +96,7 @@ export default function TypingGame({ onFinish }) {
   // Compute accuracy + WPM continuously
   useEffect(() => {
     const acc =
-      totalTyped > 0 ? Math.round((totalCorrect / totalTyped) * 100) : 100;
+      totalTyped > 0 ? Math.round((totalCorrect / totalTyped) * 100) : 0;
     setAccuracy(acc);
 
     if (startTime) {
@@ -131,6 +154,23 @@ export default function TypingGame({ onFinish }) {
 
   return (
     <div className="text-center p-6">
+      {/* Live Stats (top-right) */}
+      {!finished && (
+        <div className="mb-4 flex justify-start">
+          <div className="flex items-center gap-6 text-right text-xl sm:text-2xl md:text-3xl font-semibold text-gray-700">
+            <p>
+              Time: <span className="text-red-600">{String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}</span>
+            </p>
+            <p>
+              Accuracy: <span className="text-blue-600">{accuracy}%</span>
+            </p>
+            <p>
+              WPM: <span className="text-purple-600">{wpm}</span>
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Typing Area */}
       <div
         ref={containerRef}
@@ -144,21 +184,6 @@ export default function TypingGame({ onFinish }) {
       >
         {renderText()}
       </div>
-
-      {/* Live Stats */}
-      {!finished && (
-        <div className="mt-4 text-gray-700 text-md font-semibold flex justify-center gap-6">
-          <p>
-            Time: <span className="text-red-600">{String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}</span>
-          </p>
-          <p>
-            Accuracy: <span className="text-blue-600">{accuracy}%</span>
-          </p>
-          <p>
-            WPM: <span className="text-purple-600">{wpm}</span>
-          </p>
-        </div>
-      )}
     </div>
   );
 }

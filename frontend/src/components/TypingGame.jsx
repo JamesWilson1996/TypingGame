@@ -121,7 +121,7 @@ export default function TypingGame({ onFinish }) {
       setFinished(true);
       const wordsTyped = input.length / 5;
       const finalWpm = Math.round(wordsTyped / (TEST_DURATION_SECONDS / 60));
-      const finalAccuracy = totalTyped > 0 ? Math.round((totalCorrect / totalTyped) * 100) : 100;
+      const finalAccuracy = totalTyped > 0 ? Math.round((totalCorrect / totalTyped) * 100) : 0;
       onFinish(finalWpm, finalAccuracy);
     }
   }, [timeLeft, finished, input.length, totalTyped, totalCorrect, onFinish]);
@@ -156,7 +156,7 @@ export default function TypingGame({ onFinish }) {
     <div className="text-center p-6">
       {/* Live Stats (top-right) */}
       {!finished && (
-        <div className="mb-4 flex justify-end">
+        <div className="mb-4 flex justify-start">
           <div className="flex items-center gap-6 text-right text-lg sm:text-xl md:text-2xl font-semibold text-gray-700">
             <p>
               Time: <span className="text-[#11463E]">{String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}</span>

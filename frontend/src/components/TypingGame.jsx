@@ -32,7 +32,7 @@ export default function TypingGame({ onFinish }) {
     setStartTime(null);
     setFinished(false);
     setIsTyping(false);
-    setAccuracy(0);
+    setAccuracy(100);
     setSampleText(generateRandomText(200));
     setWpm(0);
     setTotalTyped(0);
@@ -96,7 +96,7 @@ export default function TypingGame({ onFinish }) {
   // Compute accuracy + WPM continuously
   useEffect(() => {
     const acc =
-      totalTyped > 0 ? Math.round((totalCorrect / totalTyped) * 100) : 0;
+      totalTyped > 0 ? Math.round((totalCorrect / totalTyped) * 100) : 100;
     setAccuracy(acc);
 
     if (startTime) {
@@ -156,16 +156,16 @@ export default function TypingGame({ onFinish }) {
     <div className="text-center p-6">
       {/* Live Stats (top-right) */}
       {!finished && (
-        <div className="mb-4 flex justify-start">
-          <div className="flex items-center gap-6 text-right text-xl sm:text-2xl md:text-3xl font-semibold text-gray-700">
+        <div className="mb-4 flex justify-end">
+          <div className="flex items-center gap-6 text-right text-lg sm:text-xl md:text-2xl font-semibold text-gray-700">
             <p>
-              Time: <span className="text-red-600">{String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}</span>
+              Time: <span className="text-[#11463E]">{String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}</span>
             </p>
             <p>
-              Accuracy: <span className="text-blue-600">{accuracy}%</span>
+              Accuracy: <span className="text-[#8553e0]">{accuracy}%</span>
             </p>
             <p>
-              WPM: <span className="text-purple-600">{wpm}</span>
+              WPM: <span className="text-[#8553e0]">{wpm}</span>
             </p>
           </div>
         </div>
@@ -176,9 +176,11 @@ export default function TypingGame({ onFinish }) {
         ref={containerRef}
         tabIndex={0}
         onKeyDown={handleKeyDown}
-        className="w-full max-w-full font-mono border border-gray-200 rounded-lg bg-gray-50 cursor-text text-left select-none
+        className="w-full max-w-full font-mono border-2 border-gray-200 rounded-lg bg-gray-50 cursor-text text-left select-none
                    text-base sm:text-lg md:text-xl lg:text-2xl
-                   p-4 sm:p-6 md:p-8
+                   p-4 sm:p-6 md:p-8 outline-none focus:outline-none
+                   focus:ring-2 focus:ring-[#8553e0] focus:border-[#8553e0]
+                   hover:border-[#11463E]
                    min-h-[30vh] sm:min-h-[38vh] md:min-h-[45vh] lg:min-h-[52vh]
                    max-h-[70vh] overflow-y-auto"
       >

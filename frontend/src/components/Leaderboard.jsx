@@ -10,19 +10,19 @@ export default function Leaderboard() {
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-semibold mb-2 text-center">Leaderboard</h2>
-      <table className="table-auto mx-auto border">
+      <h2 className="text-xl font-semibold mb-2 text-center text-[#11463E]">Leaderboard</h2>
+      <table className="table-auto mx-auto border border-[#11463E]">
         <thead>
           <tr>
-            <th className="border px-4 py-2">Name</th>
-            <th className="border px-4 py-2">WPM</th>
+            <th className="border border-[#11463E] px-4 py-2 text-[#11463E]">Name</th>
+            <th className="border border-[#11463E] px-4 py-2 text-[#11463E]">WPM</th>
           </tr>
         </thead>
         <tbody>
           {scores.map((s, i) => (
             <tr key={i}>
-              <td className="border px-4 py-2">{s.name}</td>
-              <td className="border px-4 py-2">{s.wpm}</td>
+              <td className="border border-[#11463E] px-4 py-2">{s.name}</td>
+              <td className="border border-[#11463E] px-4 py-2">{s.wpm}</td>
             </tr>
           ))}
         </tbody>

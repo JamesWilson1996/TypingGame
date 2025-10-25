@@ -10,13 +10,20 @@ export default function StartScreen({ onStart }) {
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
     >
-      <h1 className="text-3xl font-bold mb-6">Typing Speed Game</h1>
+      <img
+        src="/bg.jpg"
+        alt="Typing game cover"
+        loading="eager"
+        style={{ aspectRatio: '1 / 1' }}
+        className="mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md aspect-square object-cover rounded-md mb-6"
+      />
+      <h1 className="text-3xl font-bold mb-6 text-[#11463E]">Typing Speed Game</h1>
       <p className="text-gray-600 mb-8">
         Test your typing speed and compete for a spot on the leaderboard!
       </p>
       <button
         onClick={onStart}
-        className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700 transition"
+        className="bg-[#8553e0] text-white px-6 py-3 rounded-lg shadow hover:brightness-90 transition"
       >
         Start Game
       </button>

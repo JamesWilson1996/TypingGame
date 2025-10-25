@@ -38,6 +38,7 @@ export default function App() {
 
   return (
     <div className="w-full mx-auto border rounded shadow bg-white overflow-hidden
+                    border-[#11463E]/40
                     max-w-2xl sm:max-w-3xl md:max-w-4xl lg:max-w-5xl
                     mt-6 sm:mt-10 px-4 sm:px-6 md:px-8 py-4 sm:py-6">
       <AnimatePresence mode="wait">
@@ -73,17 +74,17 @@ export default function App() {
         {wpm && !submitted && (
           <motion.div
             key="result"
-            className="text-center space-y-4"
+            className="text-center space-y-4 sm:space-y-6 md:space-y-8 text-lg sm:text-xl md:text-2xl"
             variants={variants}
             initial="initial"
             animate="animate"
             exit="exit"
             transition={{ duration: 0.4 }}
           >
-           <p className="text-lg">
+           <p className="text-xl sm:text-2xl md:text-3xl text-[#11463E]">
               Your speed: <b>{wpm} WPM</b>
             </p>
-            <p className="text-lg text-blue-600">
+            <p className="text-xl sm:text-2xl md:text-3xl text-[#8553e0]">
               Accuracy: <b>{accuracy}%</b>
             </p>
             <input
@@ -91,18 +92,23 @@ export default function App() {
               placeholder="Enter your name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="border p-2 rounded"
+              className="border rounded w-full sm:w-2/3 md:w-1/2 max-w-md
+                         p-3 sm:p-4 text-base sm:text-lg md:text-xl"
             />
-            <div className="flex justify-center gap-3">
+            <div className="flex justify-center gap-3 sm:gap-4 md:gap-6">
               <button
                 onClick={handleSubmit}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                className="bg-[#8553e0] text-white rounded hover:brightness-90
+                           px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-3.5
+                           text-base sm:text-lg"
               >
                 Save Score
               </button>
               <button
                 onClick={handleRestart}
-                className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+                className="bg-[#11463E] text-white rounded hover:brightness-90
+                           px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-3.5
+                           text-base sm:text-lg"
               >
                 Restart
               </button>
@@ -114,7 +120,7 @@ export default function App() {
         {submitted && (
           <motion.div
             key="leaderboard"
-            className="text-center"
+            className="text-center text-lg sm:text-xl md:text-2xl space-y-4 sm:space-y-6"
             variants={variants}
             initial="initial"
             animate="animate"
@@ -124,7 +130,9 @@ export default function App() {
             <Leaderboard />
             <button
               onClick={handleRestart}
-              className="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+              className="mt-4 bg-[#8553e0] text-white rounded hover:brightness-90
+                         px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-3.5
+                         text-base sm:text-lg"
             >
               Play Again
             </button>

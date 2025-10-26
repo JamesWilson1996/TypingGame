@@ -22,3 +22,11 @@ export async function fetchLeaderboard() {
   const res = await fetch(`${API_URL}/leaderboard`);
   return res.json();
 }
+
+export async function fetchResults(page = 1, limit = 50, sort = 'latest', order = 'desc') {
+  const offset = (page - 1) * limit;
+  const params = new URLSearchParams({ limit: String(limit), offset: String(offset), sort, order });
+  const res = await fetch(`${API_URL}/results?${params.toString()}`);
+  if (!res.ok) throw new Error(`Failed to fetch results (${res.status})`);
+  return res.json();
+}

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-export default function StartScreen({ onStart }) {
+export default function StartScreen({ onStart, onViewLeaderboard }) {
   return (
     <motion.div
       key="start"
@@ -21,12 +21,20 @@ export default function StartScreen({ onStart }) {
       <p className="text-gray-600 mb-8">
         Test your typing speed and compete for a spot on the leaderboard!
       </p>
-      <button
-        onClick={onStart}
-        className="bg-[#8553e0] text-white px-6 py-3 rounded-lg shadow hover:brightness-90 transition"
-      >
-        Start Game
-      </button>
+      <div className="flex items-center justify-center gap-3 sm:gap-4">
+        <button
+          onClick={onStart}
+          className="bg-[#8553e0] text-white px-6 py-3 rounded-lg shadow hover:brightness-90 transition"
+        >
+          Start Game
+        </button>
+        <button
+          onClick={() => onViewLeaderboard && onViewLeaderboard()}
+          className="bg-[#11463E] text-white px-6 py-3 rounded-lg shadow hover:brightness-95 transition"
+        >
+          View Leaderboard
+        </button>
+      </div>
     </motion.div>
   );
 }

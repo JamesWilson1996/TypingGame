@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import StartScreen from "./components/StartScreen";
 import TypingGame from "./components/TypingGame";
 import Leaderboard from "./components/Leaderboard";
+import AllResults from "./components/AllResults";
 import { submitScore } from "./api";
 
 export default function App() {
@@ -11,6 +12,7 @@ export default function App() {
   const [accuracy, setAccuracy] = useState(null);
   const [name, setName] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [viewAll, setViewAll] = useState(false);
 
   const handleStart = () => setStarted(true);
   const handleFinish = (speed, acc) => {
@@ -32,6 +34,7 @@ export default function App() {
     setWpm(null);
     setName("");
     setSubmitted(false);
+    setViewAll(false);
   };
 
   const variants = {
@@ -47,7 +50,7 @@ export default function App() {
                     mt-6 sm:mt-10 px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-4 sm:py-6">
       <AnimatePresence mode="wait">
         {/* Start Screen */}
-        {!started && (
+        {!started && !submitted && !viewAll && (
           <motion.div
             key="start"
             variants={variants}
@@ -56,7 +59,7 @@ export default function App() {
             exit="exit"
             transition={{ duration: 0.4 }}
           >
-            <StartScreen onStart={handleStart} />
+            <StartScreen onStart={handleStart} onViewLeaderboard={() => setSubmitted(true)} />
           </motion.div>
         )}
 
@@ -75,7 +78,7 @@ export default function App() {
         )}
 
         {/* Results Screen */}
-        {wpm && !submitted && (
+        {wpm && !submitted && !viewAll && (
           <motion.div
             key="result"
             className="text-center space-y-4 sm:space-y-6 md:space-y-8 text-lg sm:text-xl md:text-2xl"
@@ -124,7 +127,7 @@ export default function App() {
         )}
 
         {/* Leaderboard */}
-        {submitted && (
+        {submitted && !viewAll && (
           <motion.div
             key="leaderboard"
             className="text-center text-lg sm:text-xl md:text-2xl space-y-4 sm:space-y-6"
@@ -134,7 +137,7 @@ export default function App() {
             exit="exit"
             transition={{ duration: 0.4 }}
           >
-            <Leaderboard />
+            <Leaderboard onViewAll={() => setViewAll(true)} />
             <button
               onClick={handleRestart}
               className="mt-4 bg-[#8553e0] text-white rounded hover:brightness-90
@@ -143,6 +146,21 @@ export default function App() {
             >
               Play Again
             </button>
+          </motion.div>
+        )}
+
+        {/* All Results */}
+        {viewAll && (
+          <motion.div
+            key="allresults"
+            className="text-center"
+            variants={variants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.4 }}
+          >
+            <AllResults onBack={() => setViewAll(false)} />
           </motion.div>
         )}
       </AnimatePresence>

@@ -14,8 +14,10 @@ export default function TypingGame({ onFinish }) {
   const TEST_DURATION_SECONDS = 30;
   const [timeLeft, setTimeLeft] = useState(TEST_DURATION_SECONDS);
 
-  const [totalTyped, setTotalTyped] = useState(0);
-  const [totalCorrect, setTotalCorrect] = useState(0);
+  // Accuracy will be derived from typed characters vs expected
+  // Track last completed word boundary (by matching spaces)
+  const [completedChars, setCompletedChars] = useState(0);
+  const [completionTime, setCompletionTime] = useState(null);
 
   const containerRef = useRef(null);
   const typingTimer = useRef(null);
@@ -35,8 +37,8 @@ export default function TypingGame({ onFinish }) {
     setAccuracy(100);
     setSampleText(generateRandomText(200));
     setWpm(0);
-    setTotalTyped(0);
-    setTotalCorrect(0);
+    setCompletedChars(0);
+    setCompletionTime(null);
     setTimeLeft(TEST_DURATION_SECONDS);
     // refocus the typing area
     setTimeout(() => containerRef.current?.focus(), 0);
@@ -74,17 +76,14 @@ export default function TypingGame({ onFinish }) {
     if (e.key.length === 1) {
       const nextChar = e.key;
       const expectedChar = sampleText[input.length];
-
-      // Update total keystrokes
-      setTotalTyped((prev) => prev + 1);
-
-      // Count if correct
-      if (nextChar === expectedChar) {
-        setTotalCorrect((prev) => prev + 1);
-      }
-
       // Add to input
       setInput((prev) => (prev + nextChar).slice(0, sampleText.length));
+      // If a word boundary is correctly completed (matching space), update completion markers
+      if (nextChar === " " && expectedChar === " ") {
+        const newLen = Math.min(input.length + 1, sampleText.length);
+        setCompletedChars(newLen);
+        setCompletionTime(Date.now());
+      }
     } else if (e.key === "Backspace") {
       // Allow backspace to delete characters visually
       setInput((prev) => prev.slice(0, -1));
@@ -95,19 +94,27 @@ export default function TypingGame({ onFinish }) {
 
   // Compute accuracy + WPM continuously
   useEffect(() => {
-    const acc =
-      totalTyped > 0 ? Math.round((totalCorrect / totalTyped) * 100) : 100;
-    setAccuracy(acc);
-
-    if (startTime) {
-      const now = Date.now();
-      const timeElapsed = (now - startTime) / 1000 / 60; // minutes
-      const wordsTyped = input.length / 5;
-      const liveWpm =
-        timeElapsed > 0 ? Math.round(wordsTyped / timeElapsed) : 0;
-      setWpm(liveWpm);
+    // Per-letter accuracy based on current input vs sample
+    if (input.length === 0) {
+      setAccuracy(100);
+    } else {
+      let correct = 0;
+      for (let i = 0; i < input.length; i++) {
+        if (input[i] === sampleText[i]) correct++;
+      }
+      setAccuracy(Math.round((correct / input.length) * 100));
     }
-  }, [totalTyped, totalCorrect, input, startTime]);
+
+    // Live WPM updates only when a word is completed
+    if (startTime && completionTime && completedChars > 0) {
+      const minutes = (completionTime - startTime) / 1000 / 60;
+      const words = completedChars / 5;
+      const liveWpm = minutes > 0 ? Math.round(words / minutes) : 0;
+      setWpm(liveWpm);
+    } else if (!startTime || completedChars === 0) {
+      setWpm(0);
+    }
+  }, [input, sampleText, startTime, completedChars, completionTime]);
 
   useEffect(() => {
     return () => {
@@ -119,12 +126,22 @@ export default function TypingGame({ onFinish }) {
   useEffect(() => {
     if (timeLeft === 0 && !finished) {
       setFinished(true);
-      const wordsTyped = input.length / 5;
-      const finalWpm = Math.round(wordsTyped / (TEST_DURATION_SECONDS / 60));
-      const finalAccuracy = totalTyped > 0 ? Math.round((totalCorrect / totalTyped) * 100) : 0;
+      // Final WPM based on last completed word boundary
+      let finalWpm = 0;
+      if (startTime && completionTime && completedChars > 0) {
+        const minutes = (completionTime - startTime) / 1000 / 60;
+        const words = completedChars / 5;
+        finalWpm = minutes > 0 ? Math.round(words / minutes) : 0;
+      }
+      // Per-letter final accuracy
+      let correct = 0;
+      for (let i = 0; i < input.length; i++) {
+        if (input[i] === sampleText[i]) correct++;
+      }
+      const finalAccuracy = input.length > 0 ? Math.round((correct / input.length) * 100) : 0;
       onFinish(finalWpm, finalAccuracy);
     }
-  }, [timeLeft, finished, input.length, totalTyped, totalCorrect, onFinish]);
+  }, [timeLeft, finished, startTime, completionTime, completedChars, input, sampleText, onFinish]);
 
   const renderText = () => {
     const chars = sampleText.split("");

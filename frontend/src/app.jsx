@@ -43,8 +43,8 @@ export default function App() {
   return (
     <div className="w-full mx-auto border rounded shadow bg-white overflow-hidden
                     border-[#11463E]/40
-                    max-w-2xl sm:max-w-3xl md:max-w-4xl lg:max-w-5xl
-                    mt-6 sm:mt-10 px-4 sm:px-6 md:px-8 py-4 sm:py-6">
+                    max-w-3xl sm:max-w-4xl md:max-w-5xl lg:max-w-6xl xl:max-w-7xl 2xl:max-w-[96rem]
+                    mt-6 sm:mt-10 px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-4 sm:py-6">
       <AnimatePresence mode="wait">
         {/* Start Screen */}
         {!started && (
@@ -70,7 +70,7 @@ export default function App() {
             exit="exit"
             transition={{ duration: 0.4 }}
           >
-            <TypingGame onFinish={handleFinish} />
+            <TypingGame onFinish={handleFinish} onBack={handleRestart} />
           </motion.div>
         )}
 

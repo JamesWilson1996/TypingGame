@@ -11,7 +11,12 @@ const WORD_LIST = [
   "well", "change", "turn", "dungeon", "dragon", "peak", "mine", "those",
   "music", "even", "that", "this", "where", "matter", "do", "one",
   "general", "air", "force", "eye", "person", "become", "wife", "husband",
-  "partner", "use", "few", "of", "at", "or", "out", "up", "play", "point"
+  "partner", "use", "few", "of", "at", "or", "out", "up", "play", "point",
+  "while", "last", "some", "we", "begin", "could", "tell", "system",
+  "now", "order", "look", "problem", "they", "may", "end", "such",
+  "you", "because", "present", "like", "run", "again", "early", "come",
+  "move", "nation", "know", "late", "program", "place", "also", "find",
+  "toothless", "merida", "tangled", "demon", "hunter", "hops", "spell"
 ];
 
 /**

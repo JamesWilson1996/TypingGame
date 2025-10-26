@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { generateRandomText } from "../utils/generateText";
 
-export default function TypingGame({ onFinish }) {
+export default function TypingGame({ onFinish, onBack }) {
   const [input, setInput] = useState("");
   const [startTime, setStartTime] = useState(null);
   const [finished, setFinished] = useState(false);
@@ -18,6 +18,9 @@ export default function TypingGame({ onFinish }) {
   // Track total characters from correctly completed words (including spaces)
   const [completedCorrectChars, setCompletedCorrectChars] = useState(0);
   const [completionTime, setCompletionTime] = useState(null);
+  // Track accuracy over the whole test duration (ignore backspaces)
+  const [totalInputs, setTotalInputs] = useState(0);
+  const [totalCorrectInputs, setTotalCorrectInputs] = useState(0);
 
   const containerRef = useRef(null);
   const typingTimer = useRef(null);
@@ -39,6 +42,8 @@ export default function TypingGame({ onFinish }) {
     setWpm(0);
     setCompletedCorrectChars(0);
     setCompletionTime(null);
+    setTotalInputs(0);
+    setTotalCorrectInputs(0);
     setTimeLeft(TEST_DURATION_SECONDS);
     // refocus the typing area
     setTimeout(() => containerRef.current?.focus(), 0);
@@ -78,6 +83,13 @@ export default function TypingGame({ onFinish }) {
       const expectedChar = sampleText[input.length];
       // Add to input
       setInput((prev) => (prev + nextChar).slice(0, sampleText.length));
+      // Update accuracy counters (ignore backspace, count only printable)
+      if (expectedChar !== undefined) {
+        setTotalInputs((p) => p + 1);
+        if (nextChar === expectedChar) {
+          setTotalCorrectInputs((p) => p + 1);
+        }
+      }
       // If a word boundary is reached and the word is fully correct, record completion
       if (nextChar === " " && expectedChar === " ") {
         const newLen = Math.min(input.length + 1, sampleText.length);
@@ -102,16 +114,9 @@ export default function TypingGame({ onFinish }) {
 
   // Compute accuracy + WPM continuously
   useEffect(() => {
-    // Per-letter accuracy based on current input vs sample
-    if (input.length === 0) {
-      setAccuracy(100);
-    } else {
-      let correct = 0;
-      for (let i = 0; i < input.length; i++) {
-        if (input[i] === sampleText[i]) correct++;
-      }
-      setAccuracy(Math.round((correct / input.length) * 100));
-    }
+    // Accuracy based on total inputs vs total correct, ignoring backspaces
+    const acc = totalInputs > 0 ? Math.round((totalCorrectInputs / totalInputs) * 100) : 100;
+    setAccuracy(acc);
 
     // Live WPM updates only when a word is completed correctly
     if (startTime && completionTime && completedCorrectChars > 0) {
@@ -122,7 +127,7 @@ export default function TypingGame({ onFinish }) {
     } else if (!startTime || completedCorrectChars === 0) {
       setWpm(0);
     }
-  }, [input, sampleText, startTime, completedCorrectChars, completionTime]);
+  }, [input, sampleText, startTime, completedCorrectChars, completionTime, totalInputs, totalCorrectInputs]);
 
   useEffect(() => {
     return () => {
@@ -141,15 +146,11 @@ export default function TypingGame({ onFinish }) {
         const words = completedCorrectChars / 5;
         finalWpm = minutes > 0 ? Math.round(words / minutes) : 0;
       }
-      // Per-letter final accuracy
-      let correct = 0;
-      for (let i = 0; i < input.length; i++) {
-        if (input[i] === sampleText[i]) correct++;
-      }
-      const finalAccuracy = input.length > 0 ? Math.round((correct / input.length) * 100) : 0;
+      // Final accuracy based on total inputs (ignoring backspaces)
+      const finalAccuracy = totalInputs > 0 ? Math.round((totalCorrectInputs / totalInputs) * 100) : 100;
       onFinish(finalWpm, finalAccuracy);
     }
-  }, [timeLeft, finished, startTime, completionTime, completedCorrectChars, input, sampleText, onFinish]);
+  }, [timeLeft, finished, startTime, completionTime, completedCorrectChars, totalInputs, totalCorrectInputs, onFinish]);
 
   const renderText = () => {
     const chars = sampleText.split("");
@@ -179,9 +180,9 @@ export default function TypingGame({ onFinish }) {
 
   return (
     <div className="text-center p-6">
-      {/* Live Stats (top-right) */}
+      {/* Live Stats + Hint (top row) */}
       {!finished && (
-        <div className="mb-4 flex justify-start">
+        <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-6 text-right text-lg sm:text-xl md:text-2xl font-semibold text-gray-700">
             <p>
               Time: <span className="text-[#11463E]">{String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}</span>
@@ -193,6 +194,15 @@ export default function TypingGame({ onFinish }) {
               WPM: <span className="text-[#8553e0]">{wpm}</span>
             </p>
           </div>
+          <div className="flex items-center gap-3 text-sm sm:text-base">
+            <span className="text-gray-500 hidden sm:inline">Press Tab to reset</span>
+            <button
+              onClick={() => onBack && onBack()}
+              className="px-3 py-1.5 sm:px-4 sm:py-2 rounded bg-[#11463E] text-white hover:brightness-95"
+            >
+              Back to Start
+            </button>
+          </div>
         </div>
       )}
 
@@ -201,15 +211,15 @@ export default function TypingGame({ onFinish }) {
         ref={containerRef}
         tabIndex={0}
         onKeyDown={handleKeyDown}
-        className="w-full max-w-full font-mono border-2 border-gray-200 rounded-lg bg-gray-50 cursor-text text-left select-none
-                   text-base sm:text-lg md:text-xl lg:text-2xl
-                   p-4 sm:p-6 md:p-8 outline-none focus:outline-none
-                   focus:ring-2 focus:ring-[#8553e0] focus:border-[#8553e0]
-                   hover:border-[#11463E]
-                   min-h-[30vh] sm:min-h-[38vh] md:min-h-[45vh] lg:min-h-[52vh]
-                   max-h-[70vh] overflow-y-auto"
+        className="w-full max-w-full font-mono rounded-lg bg-gray-50 cursor-text text-left select-none flex flex-col justify-center
+                    text-base sm:text-lg md:text-xl lg:text-2xl
+                    p-4 sm:p-6 md:p-8 outline-none focus:outline-none
+                    min-h-[30vh] sm:min-h-[38vh] md:min-h-[45vh] lg:min-h-[52vh]
+                    max-h-[70vh] overflow-y-auto"
       >
-        {renderText()}
+        <div className="w-full">
+          {renderText()}
+        </div>
       </div>
     </div>
   );

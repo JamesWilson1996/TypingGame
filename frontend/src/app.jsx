@@ -81,8 +81,14 @@ export default function App() {
             exit="exit"
             transition={{ duration: 0.4 }}
           >
-           <p className="text-xl sm:text-2xl md:text-3xl text-[#11463E]">
-              Your speed: <b>{wpm} WPM · {accuracy}%</b>
+           <p className="text-xl sm:text-2xl md:text-3xl">
+              Your speed:
+              {" "}
+              <b>
+                <span className="text-[#11463E]">{wpm} WPM</span>
+                {" "}·{" "}
+                <span className="text-[#8553e0]">{accuracy}%</span>
+              </b>
             </p>
             <input
               type="text"

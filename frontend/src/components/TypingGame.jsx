@@ -15,8 +15,8 @@ export default function TypingGame({ onFinish }) {
   const [timeLeft, setTimeLeft] = useState(TEST_DURATION_SECONDS);
 
   // Accuracy will be derived from typed characters vs expected
-  // Track last completed word boundary (by matching spaces)
-  const [completedChars, setCompletedChars] = useState(0);
+  // Track total characters from correctly completed words (including spaces)
+  const [completedCorrectChars, setCompletedCorrectChars] = useState(0);
   const [completionTime, setCompletionTime] = useState(null);
 
   const containerRef = useRef(null);
@@ -37,7 +37,7 @@ export default function TypingGame({ onFinish }) {
     setAccuracy(100);
     setSampleText(generateRandomText(200));
     setWpm(0);
-    setCompletedChars(0);
+    setCompletedCorrectChars(0);
     setCompletionTime(null);
     setTimeLeft(TEST_DURATION_SECONDS);
     // refocus the typing area
@@ -78,11 +78,19 @@ export default function TypingGame({ onFinish }) {
       const expectedChar = sampleText[input.length];
       // Add to input
       setInput((prev) => (prev + nextChar).slice(0, sampleText.length));
-      // If a word boundary is correctly completed (matching space), update completion markers
+      // If a word boundary is reached and the word is fully correct, record completion
       if (nextChar === " " && expectedChar === " ") {
         const newLen = Math.min(input.length + 1, sampleText.length);
-        setCompletedChars(newLen);
-        setCompletionTime(Date.now());
+        const lastSpaceIdx = input.lastIndexOf(" ");
+        const wordStart = lastSpaceIdx + 1;
+        const typedWord = input.slice(wordStart); // current word without the trailing space
+        const expectedWord = sampleText.slice(wordStart, wordStart + typedWord.length);
+        const isWordCorrect = typedWord.length > 0 && typedWord === expectedWord;
+        if (isWordCorrect) {
+          // Add the correctly completed word length plus the space
+          setCompletedCorrectChars((prev) => prev + typedWord.length + 1);
+          setCompletionTime(Date.now());
+        }
       }
     } else if (e.key === "Backspace") {
       // Allow backspace to delete characters visually
@@ -105,16 +113,16 @@ export default function TypingGame({ onFinish }) {
       setAccuracy(Math.round((correct / input.length) * 100));
     }
 
-    // Live WPM updates only when a word is completed
-    if (startTime && completionTime && completedChars > 0) {
+    // Live WPM updates only when a word is completed correctly
+    if (startTime && completionTime && completedCorrectChars > 0) {
       const minutes = (completionTime - startTime) / 1000 / 60;
-      const words = completedChars / 5;
+      const words = completedCorrectChars / 5;
       const liveWpm = minutes > 0 ? Math.round(words / minutes) : 0;
       setWpm(liveWpm);
-    } else if (!startTime || completedChars === 0) {
+    } else if (!startTime || completedCorrectChars === 0) {
       setWpm(0);
     }
-  }, [input, sampleText, startTime, completedChars, completionTime]);
+  }, [input, sampleText, startTime, completedCorrectChars, completionTime]);
 
   useEffect(() => {
     return () => {
@@ -126,11 +134,11 @@ export default function TypingGame({ onFinish }) {
   useEffect(() => {
     if (timeLeft === 0 && !finished) {
       setFinished(true);
-      // Final WPM based on last completed word boundary
+      // Final WPM based on correctly completed words only
       let finalWpm = 0;
-      if (startTime && completionTime && completedChars > 0) {
+      if (startTime && completionTime && completedCorrectChars > 0) {
         const minutes = (completionTime - startTime) / 1000 / 60;
-        const words = completedChars / 5;
+        const words = completedCorrectChars / 5;
         finalWpm = minutes > 0 ? Math.round(words / minutes) : 0;
       }
       // Per-letter final accuracy
@@ -141,7 +149,7 @@ export default function TypingGame({ onFinish }) {
       const finalAccuracy = input.length > 0 ? Math.round((correct / input.length) * 100) : 0;
       onFinish(finalWpm, finalAccuracy);
     }
-  }, [timeLeft, finished, startTime, completionTime, completedChars, input, sampleText, onFinish]);
+  }, [timeLeft, finished, startTime, completionTime, completedCorrectChars, input, sampleText, onFinish]);
 
   const renderText = () => {
     const chars = sampleText.split("");

@@ -16,6 +16,7 @@ export default function Leaderboard() {
           <tr>
             <th className="border border-[#11463E] px-4 py-2 text-[#11463E]">Name</th>
             <th className="border border-[#11463E] px-4 py-2 text-[#11463E]">WPM</th>
+            <th className="border border-[#11463E] px-4 py-2 text-[#11463E]">Accuracy</th>
           </tr>
         </thead>
         <tbody>
@@ -23,6 +24,7 @@ export default function Leaderboard() {
             <tr key={i}>
               <td className="border border-[#11463E] px-4 py-2">{s.name}</td>
               <td className="border border-[#11463E] px-4 py-2">{s.wpm}</td>
+              <td className="border border-[#11463E] px-4 py-2">{s.accuracy}%</td>
             </tr>
           ))}
         </tbody>

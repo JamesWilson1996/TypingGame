@@ -19,7 +19,7 @@ export default function App() {
     };
   const handleSubmit = async () => {
     if (!name) return alert("Please enter your name!");
-    await submitScore(name, wpm);
+    await submitScore(name, wpm, accuracy);
     setSubmitted(true);
   };
 
@@ -82,10 +82,7 @@ export default function App() {
             transition={{ duration: 0.4 }}
           >
            <p className="text-xl sm:text-2xl md:text-3xl text-[#11463E]">
-              Your speed: <b>{wpm} WPM</b>
-            </p>
-            <p className="text-xl sm:text-2xl md:text-3xl text-[#8553e0]">
-              Accuracy: <b>{accuracy}%</b>
+              Your speed: <b>{wpm} WPM · {accuracy}%</b>
             </p>
             <input
               type="text"

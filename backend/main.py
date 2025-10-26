@@ -18,11 +18,15 @@ app.add_middleware(
 class Score(BaseModel):
     name: str
     wpm: int
+    accuracy: int
 
 @app.post("/api/submit")
 def submit_score(score: Score):
     conn = get_db_connection()
-    conn.execute("INSERT INTO scores (name, wpm) VALUES (?, ?)", (score.name, score.wpm))
+    conn.execute(
+        "INSERT INTO scores (name, wpm, accuracy) VALUES (?, ?, ?)",
+        (score.name, score.wpm, score.accuracy),
+    )
     conn.commit()
     conn.close()
     return {"message": "Score saved successfully"}
@@ -30,6 +34,11 @@ def submit_score(score: Score):
 @app.get("/api/leaderboard")
 def get_leaderboard():
     conn = get_db_connection()
-    rows = conn.execute("SELECT name, wpm FROM scores ORDER BY wpm DESC LIMIT 10").fetchall()
+    rows = conn.execute(
+        "SELECT name, wpm, accuracy FROM scores ORDER BY wpm DESC, accuracy DESC LIMIT 10"
+    ).fetchall()
     conn.close()
-    return [{"name": row["name"], "wpm": row["wpm"]} for row in rows]
+    return [
+        {"name": row["name"], "wpm": row["wpm"], "accuracy": row["accuracy"]}
+        for row in rows
+    ]

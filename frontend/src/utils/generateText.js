@@ -1,11 +1,17 @@
 const WORD_LIST = [
-  "the", "quick", "brown", "fox", "jumps", "over", "lazy", "dog",
-  "keyboard", "apple", "river", "music", "happy", "dream", "light",
-  "moon", "cloud", "green", "mountain", "stone", "story", "winter",
-  "summer", "fire", "water", "earth", "wind", "smile", "sleep",
-  "time", "world", "school", "train", "ocean", "flower", "shadow",
-  "window", "bridge", "heart", "night", "day", "dream", "color",
-  "energy", "forest", "path", "road", "friend", "voice", "word"
+  "nottingham", "wedding", "bolton", "abbey", "tithe", "barn", "ash",
+  "harry", "potter", "keyboard", "coffee", "printing", "ceramic", "the",
+  "open", "around", "but", "after", "fact", "most", "high", "own", "into",
+  "much", "right", "need", "people", "penelope", "oscar", "formula",
+  "world", "singapore", "phuket", "maldives", "richmond", "skipton",
+  "castleford", "trent", "beer", "bangkok", "cyprus", "here", "govern",
+  "way", "part", "public", "mean", "more", "help", "without", "love",
+  "vows", "off", "erhu", "guzheng", "party", "she", "time", "before",
+  "number", "physics", "little", "good", "man", "dog", "interest",
+  "well", "change", "turn", "dungeon", "dragon", "peak", "mine", "those",
+  "music", "even", "that", "this", "where", "matter", "do", "one",
+  "general", "air", "force", "eye", "person", "become", "wife", "husband",
+  "partner", "use", "few", "of", "at", "or", "out", "up", "play", "point"
 ];
 
 /**

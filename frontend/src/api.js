@@ -7,6 +7,14 @@ export async function submitScore(name, wpm, accuracy) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name, wpm, accuracy }),
   });
+  if (!res.ok) {
+    let msg = `Request failed (${res.status})`;
+    try {
+      const data = await res.json();
+      if (data && data.detail) msg = Array.isArray(data.detail) ? data.detail.map(d => d.msg).join(", ") : data.detail;
+    } catch {}
+    throw new Error(msg);
+  }
   return res.json();
 }
 

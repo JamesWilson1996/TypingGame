@@ -167,7 +167,7 @@ export default function TypingGame({ onFinish }) {
           {char}
           {isCursor && (
             <span
-              className={`absolute left-0 top-0 h-full w-[2px] bg-black ${
+              className={`absolute left-0 top-0 h-full w-[2px] bg-[#8553e0] ${
                 isTyping ? "" : "animate-blink"
               }`}
             />

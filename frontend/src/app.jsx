@@ -19,8 +19,12 @@ export default function App() {
     };
   const handleSubmit = async () => {
     if (!name) return alert("Please enter your name!");
-    await submitScore(name, wpm, accuracy);
-    setSubmitted(true);
+    try {
+      await submitScore(name, wpm, accuracy);
+      setSubmitted(true);
+    } catch (err) {
+      alert(`Could not save score: ${err.message || err}`);
+    }
   };
 
   const handleRestart = () => {

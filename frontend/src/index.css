@@ -7,5 +7,5 @@
   25%, 75% { opacity: 0; }
 }
 .animate-blink {
-  animation: blink 1s step-start infinite;
+  animation: blink 2s step-start infinite;
 }

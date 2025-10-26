@@ -1,4 +1,5 @@
-const API_URL = "http://127.0.0.1:8000/api";
+// Use env override if provided (for containerized/prod), otherwise default to a relative path
+const API_URL = import.meta?.env?.VITE_API_URL || "/api";
 
 export async function submitScore(name, wpm, accuracy) {
   const res = await fetch(`${API_URL}/submit`, {

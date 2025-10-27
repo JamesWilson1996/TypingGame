@@ -1,6 +1,13 @@
+import sys
 import sqlite3
+from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
+
+# Ensure the backend module path is available whether tests are run from repo root or backend/
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 import main
 
@@ -103,4 +110,3 @@ def test_reset_endpoint(tmp_path, monkeypatch):
     r = client.get("/api/leaderboard")
     assert r.status_code == 200
     assert r.json() == []
-

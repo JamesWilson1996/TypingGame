@@ -59,7 +59,7 @@ def reset_scores():
 
 @app.get("/api/results")
 def get_results(
-    limit: int = Query(50, ge=1, le=500),
+    limit: int = Query(20, ge=1, le=500),
     offset: int = Query(0, ge=0),
     sort: str = Query("latest", pattern="^(latest|wpm|accuracy|name)$"),
     order: str = Query("desc", pattern="^(asc|desc)$"),

@@ -1,5 +1,5 @@
 const WORD_LIST = [
-  "nottingham", "wedding", "bolton", "abbey", "tithe", "barn", "ash",
+  "nottingham", "wedding", "abbey", "tithe", "barn", "ash", "becky",
   "harry", "potter", "keyboard", "coffee", "printing", "ceramic", "the",
   "open", "around", "but", "after", "fact", "most", "high", "own", "into",
   "much", "right", "need", "people", "penelope", "oscar", "formula",
@@ -13,7 +13,7 @@ const WORD_LIST = [
   "general", "air", "force", "eye", "person", "become", "wife", "husband",
   "partner", "use", "few", "of", "at", "or", "out", "up", "play", "point",
   "while", "last", "some", "we", "begin", "could", "tell", "system",
-  "now", "order", "look", "problem", "they", "may", "end", "such",
+  "now", "order", "look", "problem", "they", "may", "end", "such", "james",
   "you", "because", "present", "like", "run", "again", "early", "come",
   "move", "nation", "know", "late", "program", "place", "also", "find",
   "toothless", "merida", "tangled", "demon", "hunter", "hops", "spell"

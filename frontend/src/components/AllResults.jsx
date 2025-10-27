@@ -3,7 +3,7 @@ import { fetchResults } from "../api";
 
 export default function AllResults({ onBack }) {
   const [page, setPage] = useState(1);
-  const [limit] = useState(50);
+  const [limit] = useState(20);
   const [total, setTotal] = useState(0);
   const [rows, setRows] = useState([]);
   const [sort, setSort] = useState('latest');

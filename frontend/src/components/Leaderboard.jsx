@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchLeaderboard } from "../api";
 
-export default function Leaderboard({ onViewAll }) {
+export default function Leaderboard({ onViewAll, onPlayAgain }) {
   const [scores, setScores] = useState([]);
 
   useEffect(() => {
@@ -29,10 +29,16 @@ export default function Leaderboard({ onViewAll }) {
           ))}
         </tbody>
       </table>
-      <div className="mt-4 flex justify-center">
+      <div className="mt-4 flex justify-center gap-3 sm:gap-4">
+        <button
+          onClick={onPlayAgain}
+          className="bg-[#8553e0] text-white rounded hover:brightness-95 px-4 py-2"
+        >
+          Play Again
+        </button>
         <button
           onClick={onViewAll}
-          className="bg-[#8553e0] text-white rounded hover:brightness-90 px-4 py-2"
+          className="bg-[#11463E] text-white rounded hover:brightness-90 px-4 py-2"
         >
           View All Results
         </button>

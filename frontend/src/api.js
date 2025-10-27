@@ -23,7 +23,7 @@ export async function fetchLeaderboard() {
   return res.json();
 }
 
-export async function fetchResults(page = 1, limit = 50, sort = 'latest', order = 'desc') {
+export async function fetchResults(page = 1, limit = 20, sort = 'latest', order = 'desc') {
   const offset = (page - 1) * limit;
   const params = new URLSearchParams({ limit: String(limit), offset: String(offset), sort, order });
   const res = await fetch(`${API_URL}/results?${params.toString()}`);

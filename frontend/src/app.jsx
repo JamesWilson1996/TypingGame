@@ -64,7 +64,7 @@ export default function App() {
         )}
 
         {/* Typing Game */}
-        {started && !wpm && (
+        {started && wpm === null && (
           <motion.div
             key="game"
             variants={variants}
@@ -78,7 +78,7 @@ export default function App() {
         )}
 
         {/* Results Screen */}
-        {wpm && !submitted && !viewAll && (
+        {wpm !== null && !submitted && !viewAll && (
           <motion.div
             key="result"
             className="text-center space-y-4 sm:space-y-6 md:space-y-8 text-lg sm:text-xl md:text-2xl"
@@ -110,7 +110,7 @@ export default function App() {
                 onClick={handleSubmit}
                 className="bg-[#8553e0] text-white rounded hover:brightness-90
                            px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-3.5
-                           text-base sm:text-lg"
+                           text-base"
               >
                 Save Score
               </button>
@@ -118,7 +118,7 @@ export default function App() {
                 onClick={handleRestart}
                 className="bg-[#11463E] text-white rounded hover:brightness-90
                            px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-3.5
-                           text-base sm:text-lg"
+                           text-base"
               >
                 Restart
               </button>
@@ -137,15 +137,7 @@ export default function App() {
             exit="exit"
             transition={{ duration: 0.4 }}
           >
-            <Leaderboard onViewAll={() => setViewAll(true)} />
-            <button
-              onClick={handleRestart}
-              className="mt-4 bg-[#8553e0] text-white rounded hover:brightness-90
-                         px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-3.5
-                         text-base sm:text-lg"
-            >
-              Play Again
-            </button>
+            <Leaderboard onViewAll={() => setViewAll(true)} onPlayAgain={handleRestart} />
           </motion.div>
         )}
 

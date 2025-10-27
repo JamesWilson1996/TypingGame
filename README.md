@@ -31,7 +31,7 @@ Notes
 Run backend:
 - `cd backend`
 - `python -m venv .venv && . .venv/bin/activate` (Windows: `.venv\Scripts\activate`)
-- `pip install fastapi uvicorn`
+- `pip install -r requirements.txt`
 - `uvicorn main:app --reload`
 
 Run frontend:
@@ -48,6 +48,12 @@ Dev Proxy
 ## Useful Commands
 - Reset leaderboard (Docker or local):
   - `curl -X POST http://localhost:8000/api/reset`
+
+## Tests
+- Backend unit tests (pytest):
+  - `cd backend`
+  - `pip install -r requirements-dev.txt`
+  - `pytest -q`
 
 ## Security
 - The reset endpoint is unauthenticated for convenience. Gate this behind an auth check or remove it before production use.

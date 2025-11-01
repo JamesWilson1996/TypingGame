@@ -21,32 +21,41 @@ const WORD_LIST = [
 
 /**
  * Generates a random string of words from the list.
+ * - Avoids using any word that appeared in the last 10 outputs.
  * @param {number} count - Number of words to include (default 50)
  * @returns {string} Randomly generated space-separated words
  */
 export function generateRandomText(count = 50) {
   if (count <= 0 || WORD_LIST.length === 0) return "";
 
-  // Ensure we don't repeat the same word consecutively
+  const RECENT_WINDOW = 20;
   const words = [];
-  let prev = null;
+  const recent = [];
+
   for (let i = 0; i < count; i++) {
+    // Fast path: if there is only one word, just use it
     if (WORD_LIST.length === 1) {
-      // Degenerate case: only one word available
       words.push(WORD_LIST[0]);
-      prev = WORD_LIST[0];
+      // Maintain recent window
+      recent.push(WORD_LIST[0]);
+      if (recent.length > RECENT_WINDOW) recent.shift();
       continue;
     }
 
-    let word = null;
-    // Pick until different from previous
-    do {
-      const idx = Math.floor(Math.random() * WORD_LIST.length);
-      word = WORD_LIST[idx];
-    } while (word === prev);
+    const recentSet = new Set(recent);
+    let candidates = WORD_LIST.filter((w) => !recentSet.has(w));
+
+    // Fallback: if everything is in recent, allow all words again
+    if (candidates.length === 0) {
+      candidates = WORD_LIST.slice();
+    }
+
+    const idx = Math.floor(Math.random() * candidates.length);
+    const word = candidates[idx];
 
     words.push(word);
-    prev = word;
+    recent.push(word);
+    if (recent.length > RECENT_WINDOW) recent.shift();
   }
   return words.join(" ");
 }
